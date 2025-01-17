@@ -14,11 +14,9 @@
  - A Palworld server with RCON enabled
  - Know the IP address and RCON port
 
-## Setup
+## Building the App
 #### 1. Download the source
-`git clone https://github.com/JengaMasterG/`
-
-Download the zip from GitHub, and extract it.
+Open a console/terminal and run `git clone https://github.com/JengaMasterG/PalPad`, or download the zip from GitHub and extract it.
 
 _If you do not want to compile the source into a binary, continue at the [Usage](#usage) section._
 
@@ -27,15 +25,19 @@ Open a console/terminal in the foler you saved the source, then run:
 
 Linux:
 ```
+sudo apt-get install gcc libgl1-mesa-dev xorg-dev libxkbcommon-dev
 go mod tidy
-go build -o palworldcli -v main.go
+go install fyne.io/fyne/v2/cmd/fyne@latest
+fyne package -os linux
 ```
 
 Windows:
 ```
 go mod tidy
-go build -o palworldcli.exe -v main.go
+go install fyne.io/fyne/v2/cmd/fyne@latest
+fyne package -os windows
 ```
+_Cross compilation is available, but is different depending on the host OS. See [Compiling for different platforms | Fyne](https://docs.fyne.io/started/cross-compiling) for more information._
 
 ## Usage
 Open a console/terminal in the folder you saved the source, then:
@@ -44,8 +46,10 @@ Inside the golang environment, run:
 
 `go run .`
 
-If the package was built:
+If the package was built / running from the binary:
 
-Linux: `./palworldcli`
+Linux: 
 
-Windows: `./palworldcli.exe`
+`tar -xvf PalPad.tar.xz && make user-install`. It will be available from the desktop app launcher.
+
+Windows: `./PalPad.exe` or double-click PalPad.exe to install
