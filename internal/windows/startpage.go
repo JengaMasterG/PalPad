@@ -1,7 +1,7 @@
 package windows
 
 import (
-	"palpad/internal/controllers/server"
+	"github.com/JengaMasterG/PalPad/internal/controllers/server"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"

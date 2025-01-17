@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"palpad/internal/logging"
+	"github.com/JengaMasterG/PalPad/internal/logging"
 
 	"github.com/JengaMasterG/palwrldcmdsgo"
 )

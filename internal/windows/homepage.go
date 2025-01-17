@@ -10,8 +10,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
-	"palpad/internal/controllers/player"
-	"palpad/internal/controllers/server"
+	"github.com/JengaMasterG/PalPad/internal/controllers/player"
+	"github.com/JengaMasterG/PalPad/internal/controllers/server"
 )
 
 var IPAddress, password = "192.168.50.2:25575", "R3dston3$"

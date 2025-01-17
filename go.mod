@@ -1,4 +1,4 @@
-module palpad
+module github.com/JengaMasterG/PalPad
 
 go 1.23
 

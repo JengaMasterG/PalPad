@@ -1,7 +1,7 @@
 package app
 
 import (
-	"palpad/internal/windows"
+	"github.com/JengaMasterG/PalPad/internal/windows"
 
 	"fyne.io/fyne/v2/app"
 )

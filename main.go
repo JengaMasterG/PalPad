@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	//"palpad/internal/windows"
-	"palpad/app"
+	"github.com/JengaMasterG/PalPad/app"
 )
 
 // TODO: Set mobile layout to HBox for form layouts
