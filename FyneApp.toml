@@ -1,0 +1,13 @@
+[Details]
+  Icon = "Base_Icon.png"
+  Name = "PalPad"
+  ID = "com.palpad.app"
+  Version = "0.0.1"
+  Build = 2
+
+[LinuxAndBSD]
+  GenericName = "Web Browser"
+  Categories = ["Network"]
+  Comment = "View sites on the Internet"
+  Keywords = ["browser", "web"]
+  ExecParams = "-x 42"
