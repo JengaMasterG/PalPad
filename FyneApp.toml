@@ -2,12 +2,12 @@
   Icon = "Base_Icon.png"
   Name = "PalPad"
   ID = "com.palpad.app"
-  Version = "0.0.1"
-  Build = 2
+  Version = "0.0.3"
+  Build = 4
 
 [LinuxAndBSD]
-  GenericName = "Web Browser"
-  Categories = ["Network"]
-  Comment = "View sites on the Internet"
-  Keywords = ["browser", "web"]
-  ExecParams = "-x 42"
+  GenericName = "PalPad"
+  Categories = ["Network", "Games"]
+  Comment = "Manage your Palworld Server without logging in"
+  Keywords = ["Games"]
+  ExecParams = " "
