@@ -30,10 +30,10 @@ func Info(IPAddress string, password string) (string, error) {
 func Save(IPAddress string, password string) (string, error) {
 	response, err := palwrldcmdsgo.Save(IPAddress, password)
 	if err != nil {
-		log.Print("FATAL: Could not save data", logging.NoConnectionError)
+		log.Print("FATAL: Could not save data; ", logging.NoConnectionError)
+	} else {
+		log.Print("INFO: ", response)
 	}
-	log.Print("INFO: ", response)
-
 	return response, err
 }
 

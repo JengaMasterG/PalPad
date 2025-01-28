@@ -1,6 +1,9 @@
 package windows
 
 import (
+	"log"
+
+	"github.com/JengaMasterG/PalPad/internal/controllers/database"
 	"github.com/JengaMasterG/PalPad/internal/controllers/server"
 
 	"fyne.io/fyne/v2"
@@ -12,25 +15,36 @@ import (
 func StartPage(a fyne.App) fyne.Window {
 	w := a.NewWindow("PalPad")
 	c := w.Canvas()
+	db := database.GetDB()
 
 	loginLbl := widget.NewLabel("Login")
 	loginLbl.Alignment = fyne.TextAlignCenter
+
 	ipAddr := widget.NewEntry()
 	pass := widget.NewPasswordEntry()
 	ipAddr.SetPlaceHolder("IP Address:Port")
 	pass.SetPlaceHolder("Enter Password")
+
 	issue := widget.NewLabel("")
 	issue.Alignment = fyne.TextAlignCenter
 	issue.Wrapping = fyne.TextWrap(fyne.TextWrapBreak)
 
 	connectBtn := widget.NewButton("Connect", func() {
-		data, err := server.Info(IPAddress, password)
+		data, err := server.Info(ipAddr.Text, pass.Text)
+		log.Print("From Input", ipAddr.Text, pass.Text)
 		if err != nil {
-			issue.SetText(data)
+			issue.SetText(err.Error())
 		} else {
-			w.Hide()
-			home := HomePage(a)
-			home.Show()
+			log.Print("INFO: ", data)
+			err := database.SetData(db, ipAddr.Text, pass.Text)
+			if err != nil {
+				issue.SetText(err.Error())
+			} else {
+				db.Close()
+				w.Hide()
+				home := HomePage(1, a)
+				home.Show()
+			}
 		}
 	})
 	clearBtn := widget.NewButton("Clear", func() {

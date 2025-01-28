@@ -10,16 +10,18 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
+	"github.com/JengaMasterG/PalPad/internal/controllers/database"
 	"github.com/JengaMasterG/PalPad/internal/controllers/player"
 	"github.com/JengaMasterG/PalPad/internal/controllers/server"
 )
 
-var IPAddress, password = "192.168.50.2:25575", "R3dston3$"
-
-func HomePage(a fyne.App) fyne.Window {
+func HomePage(id int, a fyne.App) fyne.Window {
 	w := a.NewWindow("PalPad")
 	w2 := a.NewWindow("About")
 	c := w.Canvas()
+	data, err := database.GetData(id)
+	ipAddrData := data.IPAddress
+	passData := data.AdminPassword
 
 	//title1 := widget.NewLabel("Server Info")
 	title2 := widget.NewLabel("Player Management")
@@ -34,8 +36,8 @@ func HomePage(a fyne.App) fyne.Window {
 	//|BanBtn|			 |KickBtn| <-- GridLayout w Btns wrapped in HBox
 	playerId := widget.NewEntry()
 	playerId.SetPlaceHolder("User's Steam ID")
-	banBtn := widget.NewButton("Ban", func() { player.BanKickPlayer(true, IPAddress, password, playerId.Text) })
-	kickBtn := widget.NewButton("Kick", func() { player.BanKickPlayer(false, IPAddress, password, playerId.Text) })
+	banBtn := widget.NewButton("Ban", func() { player.BanKickPlayer(true, ipAddrData, passData, playerId.Text) })
+	kickBtn := widget.NewButton("Kick", func() { player.BanKickPlayer(false, ipAddrData, passData, playerId.Text) })
 	btnRow := container.New(layout.NewHBoxLayout(), kickBtn, banBtn)
 	banKickContainer := container.NewVBox(playerId, btnRow)
 
@@ -47,7 +49,7 @@ func HomePage(a fyne.App) fyne.Window {
 		Items: []*widget.FormItem{
 			{Text: "SYSTEM Message", Widget: msg},
 		},
-		OnSubmit:   func() { server.Broadcast(IPAddress, password, msg.Text) },
+		OnSubmit:   func() { server.Broadcast(ipAddrData, passData, msg.Text) },
 		SubmitText: "Send Msg",
 		OnCancel:   func() { msg.SetText("") },
 		CancelText: "Clear",
@@ -61,8 +63,8 @@ func HomePage(a fyne.App) fyne.Window {
 	//|--------Table---------|
 	//Cols needs to divide evely into data
 	playerListErr := widget.NewLabel("Unable to Load Player List")
-	data, err := player.ShowPlayers(IPAddress, password)
-	playerList := LoadTable(data)
+	tableData, err := player.ShowPlayers(ipAddrData, passData)
+	playerList := LoadTable(tableData)
 	//Initial Load of the Table
 	if err != nil {
 		playerListErr.Show()
@@ -72,13 +74,13 @@ func HomePage(a fyne.App) fyne.Window {
 		playerList.Show()
 	}
 	refreshBtn := widget.NewButton("Refresh", func() {
-		data, err := player.ShowPlayers(IPAddress, password)
-		fmt.Print(data)
+		tableData, err := player.ShowPlayers(ipAddrData, passData)
+		fmt.Print(tableData)
 		if err != nil {
 			playerListErr.Show()
 			playerList.Hide()
 		} else {
-			UpdateTable(playerList, data)
+			UpdateTable(playerList, tableData)
 			playerListErr.Hide()
 			playerList.Show()
 			playerListErr.Refresh()
@@ -86,8 +88,23 @@ func HomePage(a fyne.App) fyne.Window {
 		}
 	})
 	playerListLayout := container.NewStack(playerList, playerListErr)
-	titleLayout := container.NewHBox(title5, layout.NewSpacer(), refreshBtn)
+	titleLayout := container.NewVBox((container.NewHBox(title5, layout.NewSpacer(), refreshBtn)))
 	playerLayout := container.NewGridWithRows(2, titleLayout, playerListLayout)
+
+	//Save Server
+	saveLabel := widget.NewLabel("Save Server State")
+	saveStatus := widget.NewLabel("")
+	saveBtn := widget.NewButton("Save", func() {
+		response, err := server.Save(ipAddrData, passData)
+		if err != nil {
+			saveStatus.SetText("Could not save data!")
+		} else {
+			saveStatus.SetText(response)
+		}
+		saveStatus.Refresh()
+	})
+	saveLayout := container.NewHBox(saveLabel, layout.NewSpacer(), saveBtn)
+	saveContainer := container.NewGridWithRows(2, saveLayout, saveStatus)
 
 	//Shutdown Server
 	time := widget.NewEntry()
@@ -120,10 +137,10 @@ func HomePage(a fyne.App) fyne.Window {
 		},
 		OnSubmit: func() {
 			if forceShutdown.Checked {
-				server.Shutdown(true, IPAddress, password, time.Text, msg2.Text)
+				server.Shutdown(true, ipAddrData, passData, time.Text, msg2.Text)
 			} else {
 				time.Validate()
-				server.Shutdown(false, IPAddress, password, time.Text, msg2.Text)
+				server.Shutdown(false, ipAddrData, passData, time.Text, msg2.Text)
 			}
 		},
 		SubmitText: "Shutdown",
@@ -138,15 +155,16 @@ func HomePage(a fyne.App) fyne.Window {
 	shutdownContainer := container.NewVBox(title3, shutdownLayout)
 
 	//Load the content
-	leftContainer := container.NewHBox(container.NewVBox(shutdownContainer, broadcastCanvas))
+	leftContainer := container.NewVBox(saveContainer, shutdownContainer, broadcastCanvas)
 	rightContainer := container.NewGridWithRows(3, title2, playerLayout, banKickContainer)
 	content := container.NewGridWithColumns(3, leftContainer, layout.NewSpacer(), rightContainer)
 
+	//TODO: Add Reset data function
 	w.SetMainMenu(fyne.NewMainMenu(
 		fyne.NewMenu("File"),
 
 		fyne.NewMenu("Info",
-			fyne.NewMenuItem("About", func() { About(w2).Show() })),
+			fyne.NewMenuItem("About", func() { About(ipAddrData, passData, w2).Show() })),
 	))
 
 	c.SetContent(content)
