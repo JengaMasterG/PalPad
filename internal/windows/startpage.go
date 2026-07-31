@@ -41,9 +41,9 @@ func StartPage(a fyne.App) fyne.Window {
 				issue.SetText(err.Error())
 			} else {
 				db.Close()
-				w.Hide()
 				home := HomePage(1, a)
 				home.Show()
+				w.Close()
 			}
 		}
 	})
