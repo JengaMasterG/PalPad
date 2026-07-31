@@ -50,6 +50,11 @@ If the package was built / running from the binary:
 
 Linux: 
 
-`tar -xvf PalPad.tar.xz && make user-install`. It will be available from the desktop app launcher.
+```terminal
+tar -xvf PalPad.tar.xz 
+cd PalPad
+make user-install
+```
+It will be available from the desktop app launcher.
 
 Windows: `./PalPad.exe` or double-click PalPad.exe to install
