@@ -8,8 +8,6 @@ require (
 	fyne.io/fyne/v2 v2.5.3
 	github.com/JengaMasterG/palwrldcmdsgo v1.1.1
 	github.com/chaisql/chai v0.16.0
-	github.com/google/flatbuffers v25.1.24+incompatible
-	github.com/objectbox/objectbox-go v1.8.1
 )
 
 require (
@@ -47,7 +45,6 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.5.0 // indirect
-	github.com/objectbox/objectbox-generator v0.14.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.17.0 // indirect

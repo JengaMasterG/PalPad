@@ -2,6 +2,7 @@ package windows
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -15,13 +16,16 @@ import (
 	"github.com/JengaMasterG/PalPad/internal/controllers/server"
 )
 
+var data database.ServerInfo
+var err error
+//TODO: Make these binding.String and set up Getters and Setters
+var ipAddrData string
+var passData string
+
 func HomePage(id int, a fyne.App) fyne.Window {
 	w := a.NewWindow("PalPad")
-	w2 := a.NewWindow("About")
 	c := w.Canvas()
-	data, err := database.GetData(id)
-	ipAddrData := data.IPAddress
-	passData := data.AdminPassword
+	DataRefresh(id) //TODO: Pull new data in after preferences window updates it.
 
 	//title1 := widget.NewLabel("Server Info")
 	title2 := widget.NewLabel("Player Management")
@@ -159,17 +163,41 @@ func HomePage(id int, a fyne.App) fyne.Window {
 	rightContainer := container.NewGridWithRows(3, title2, playerLayout, banKickContainer)
 	content := container.NewGridWithColumns(3, leftContainer, layout.NewSpacer(), rightContainer)
 
-	//TODO: Add Reset data function
 	w.SetMainMenu(fyne.NewMainMenu(
-		fyne.NewMenu("File"),
+		fyne.NewMenu("File",
+		fyne.NewMenuItem("Refresh", func() {
+			DataRefresh(id)
+			c.Refresh(content)
+		})),
 
 		fyne.NewMenu("Info",
-			fyne.NewMenuItem("About", func() { About(ipAddrData, passData, w2).Show() })),
+			fyne.NewMenuItem("About", func() { 
+				w2 := a.NewWindow("About")
+				About(ipAddrData, passData, w2).Show()
+			}),
+			fyne.NewMenuItem("Preferences", func() { 
+				w3 := a.NewWindow("Preferences")
+				Preferences(w3).Show()
+			}),
+		),
 	))
 
 	c.SetContent(content)
-
+	w.SetMaster()
 	return w
+}
+
+func DataRefresh(id int) {
+/**
+Used to refresh the data when initalizing the app or updating the data in the preferences window.
+**/
+	data, err = database.GetData(id)
+	if err != nil {
+		log.Print("WARN: ", err)
+	}else{
+		ipAddrData = data.IPAddress
+		passData = data.AdminPassword
+	}
 }
 
 func LoadTable(data [][]string) *widget.Table {

@@ -43,10 +43,21 @@ func GetDB() *chai.DB {
 }
 
 func GetData(id int) (ServerInfo, error) {
+	/**
+	Logic
+	If id is greater than or equal to 0, pull the data just for that id
+	If id is less than 0, pull all the data from the table
+	**/
+	
 	db := GetDB()
 	defer db.Close()
+	var query string
 
-	query := "SELECT ID, IPAddress, AdminPassword FROM serverInfo WHERE ID = " + strconv.Itoa(id)
+	if id >= 0{
+		query = "SELECT ID, IPAddress, AdminPassword FROM serverInfo WHERE ID = " + strconv.Itoa(id)
+	} else {
+		query = "SELECT ID, IPAddress, AdminPassword FROM serverInfo"
+	}
 	var s ServerInfo
 
 	stream, err := db.Query(query)
@@ -107,4 +118,18 @@ func SetData(db *chai.DB, IPAddr string, Password string) error {
 		log.Print("INFO: ", err.Error())
 	}
 	return err
+}
+
+func UpdateData(id int, ipAddr string, Password string) (error){
+	db := GetDB()
+	defer db.Close()
+
+	err := db.Exec(`UPDATE serverInfo SET IPAddress = ?, AdminPassword = ? WHERE ID = ?`, ipAddr, Password, id)
+	if err != nil {
+		log.Print("INFO: UpdateDB:", err.Error())
+		return err
+	} else {
+		log.Print("INFO: UpdateDB: Updated server info for ID: ", strconv.Itoa(id))
+		return err
+	}	
 }

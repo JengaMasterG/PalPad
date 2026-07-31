@@ -1,13 +1,13 @@
 [Details]
-  Icon = "Base_Icon.png"
-  Name = "PalPad"
-  ID = "com.palpad.app"
-  Version = "0.0.3"
-  Build = 4
+Icon = "Base_Icon.png"
+Name = "PalPad"
+ID = "com.palpad.app"
+Version = "0.0.3"
+Build = 8
 
 [LinuxAndBSD]
-  GenericName = "PalPad"
-  Categories = ["Network", "Games"]
-  Comment = "Manage your Palworld Server without logging in"
-  Keywords = ["Games"]
-  ExecParams = " "
+GenericName = "PalPad"
+Categories = ["Network", "Games"]
+Comment = "Manage your Palworld Server without logging in"
+Keywords = ["Games"]
+ExecParams = " "
