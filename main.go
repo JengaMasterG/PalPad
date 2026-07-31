@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	app.Start()
+	app.Init()
 
 	tidyUp()
 }
