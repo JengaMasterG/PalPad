@@ -42,7 +42,7 @@ func HomePage(id int, a fyne.App) fyne.Window {
 	playerId.SetPlaceHolder("User's Steam ID")
 	banBtn := widget.NewButton("Ban", func() { player.BanKickPlayer(true, ipAddrData, passData, playerId.Text) })
 	kickBtn := widget.NewButton("Kick", func() { player.BanKickPlayer(false, ipAddrData, passData, playerId.Text) })
-	btnRow := container.New(layout.NewHBoxLayout(), kickBtn, banBtn)
+	btnRow := container.NewHBox(kickBtn, banBtn)
 	banKickContainer := container.NewVBox(playerId, btnRow)
 
 	//Broadcast Container
@@ -58,9 +58,7 @@ func HomePage(id int, a fyne.App) fyne.Window {
 		OnCancel:   func() { msg.SetText("") },
 		CancelText: "Clear",
 	}
-	//btnLayout := container.NewGridWithColumns(2, layout.NewSpacer(), sendBtn)
-	msglayout := container.NewVBox(msgForm)
-	broadcastCanvas := container.NewVBox(title4, msglayout)
+	broadcastContainer := container.NewVBox(title4, msgForm)
 
 	//List Players
 	//|--Label--| |RefreshBtn|
@@ -108,7 +106,7 @@ func HomePage(id int, a fyne.App) fyne.Window {
 		saveStatus.Refresh()
 	})
 	saveLayout := container.NewHBox(saveLabel, layout.NewSpacer(), saveBtn)
-	saveContainer := container.NewGridWithRows(2, saveLayout, saveStatus)
+	saveContainer := container.NewVBox(saveLayout, saveStatus)
 
 	//Shutdown Server
 	time := widget.NewEntry()
@@ -155,13 +153,12 @@ func HomePage(id int, a fyne.App) fyne.Window {
 		},
 		CancelText: "Clear",
 	}
-	shutdownLayout := container.NewVBox(shutdown)
-	shutdownContainer := container.NewVBox(title3, shutdownLayout)
+	shutdownContainer := container.NewVBox(title3, shutdown)
 
 	//Load the content
-	leftContainer := container.NewVBox(saveContainer, shutdownContainer, broadcastCanvas)
-	rightContainer := container.NewGridWithRows(3, title2, playerLayout, banKickContainer)
-	content := container.NewGridWithColumns(3, leftContainer, layout.NewSpacer(), rightContainer)
+	leftContainer := container.NewVBox(saveContainer, shutdownContainer, broadcastContainer)
+	rightContainer := container.NewVBox(title2, playerLayout, banKickContainer)
+	content := container.NewAdaptiveGrid(2, leftContainer, rightContainer)
 
 	w.SetMainMenu(fyne.NewMainMenu(
 		fyne.NewMenu("File",
@@ -201,31 +198,80 @@ Used to refresh the data when initalizing the app or updating the data in the pr
 }
 
 func LoadTable(data [][]string) *widget.Table {
+	//The values the header should display
+	var header []string
+	if len(data) > 0 {
+		header = data[0][0:]
+	
+
+	//Drop the header from the dataset
+	data = data[1:][0:]
+	}
+	
 	cols := 3
 	rows := len(data)
 	table := widget.NewTable(func() (int, int) { return rows, cols },
 		func() fyne.CanvasObject {
-			return widget.NewLabel(strings.Repeat("", 60))
+			//Populates a table with an empty label as a template
+			item := widget.NewLabel(strings.Repeat("", 60))
+
+			return item
 		},
-		func(id widget.TableCellID, o fyne.CanvasObject) {
-			o.(*widget.Label).SetText(data[id.Row][id.Col])
+		func(cell widget.TableCellID, o fyne.CanvasObject) {
+			//fill the label with the values
+			o.(*widget.Label).SetText(data[cell.Row][cell.Col])
 		},
 	)
+	
+	//sets the size of each table column
+	table.SetColumnWidth(0, 100)
+	table.SetColumnWidth(1, 100)
+	table.SetColumnWidth(2, 300)
 
+	//Header settings
+	//  Start with updating the header
+	table.UpdateHeader = func(id widget.TableCellID, o fyne.CanvasObject) {
+		defer func() {
+			if err := recover(); err !=nil {
+				o.(*widget.Label).SetText("err")
+			}
+		}()
+		o.(*widget.Label).SetText(header[id.Col])
+	}
+	//  Flag to show the header of the table (Column A->Z)
+	table.ShowHeaderRow = true
+	
 	return table
 }
 
 func UpdateTable(table *widget.Table, data [][]string) {
-	//Get table length to compare with the lenght of new data
+	//separate the header data from the player data
+	header := data[0][0:]
+
+	//drop the header from the dataset
+	data = data[1:][0:]
+	
+	//Get table length to compare with the length of new data
 	row, col := table.Length()
 	rowData := len(data)
-
+	
 	//adjust the number of rows of the table to match the new data
 	if rowData > row || rowData < row {
 		table.Length = func() (int, int) { return rowData, col }
 	}
 
 	//after the table is the right size, we populate it with the new data
+	//  Start with updating the header
+	table.UpdateHeader = func(id widget.TableCellID, o fyne.CanvasObject) {
+		defer func() {
+			if err := recover(); err !=nil {
+				o.(*widget.Label).SetText("err")
+			}
+		}()
+		o.(*widget.Label).SetText(header[id.Col])
+	}
+
+	//  Then populate the cells with the new data
 	table.UpdateCell = func(id widget.TableCellID, o fyne.CanvasObject) {
 		defer func() {
 			if err := recover(); err != nil {

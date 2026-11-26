@@ -2,8 +2,8 @@
 Icon = "Base_Icon.png"
 Name = "PalPad"
 ID = "com.palpad.app"
-Version = "0.0.3"
-Build = 8
+Version = "0.0.5"
+Build = 13
 
 [LinuxAndBSD]
 GenericName = "PalPad"

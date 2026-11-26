@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var appVersion = "v0.0.4 " + runtime.GOOS
+var appVersion = "v0.0.5 " + runtime.GOOS
 
 func About(IPAddress string, password string, w fyne.Window) fyne.Window {
 	c := w.Canvas()
