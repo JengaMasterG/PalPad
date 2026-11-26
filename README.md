@@ -27,14 +27,14 @@ Linux:
 ```
 sudo apt-get install gcc libgl1-mesa-dev xorg-dev libxkbcommon-dev
 go mod tidy
-go install fyne.io/fyne/v2/cmd/fyne@latest
+go install fyne.io/tools/cmd/fyne@latest
 fyne package -os linux
 ```
 
 Windows:
 ```
 go mod tidy
-go install fyne.io/fyne/v2/cmd/fyne@latest
+go install fyne.io/tools/cmd/fyne@latest
 fyne package -os windows
 ```
 _Cross compilation is available, but is different depending on the host OS. See [Compiling for different platforms | Fyne](https://docs.fyne.io/started/cross-compiling) for more information._
